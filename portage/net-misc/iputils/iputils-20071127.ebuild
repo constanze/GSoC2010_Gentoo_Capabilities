@@ -74,8 +74,6 @@ src_install() {
 	use doc && dohtml doc/*.html
 }
 
-pkg_postinst()
-{
-	fcaps cap_net_raw=ep /bin/ping || die "dosetcap failed with ping"
+pkg_postinst() {
+	fcaps cap_net_raw /bin/ping || die "fcaps /bin/ping failed"
 }
-

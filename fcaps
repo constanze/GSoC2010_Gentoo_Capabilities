@@ -1,5 +1,13 @@
 #!/bin/bash
 # Distributed under the terms of the GNU General Public License v2
 
-exec setcap "${@}"
+capset=$1
+path=$2
 
+#set the capability
+setcap "$capset=ep" "$path" 
+
+#check if the capabilitiy got set correctly
+setcap -v "$capset=ep" "$path"
+
+exit
