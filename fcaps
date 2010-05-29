@@ -1,13 +1,21 @@
 #!/bin/bash
 # Distributed under the terms of the GNU General Public License v2
 
-capset=$1
-path=$2
+uid_gid=$1
+perms=$2
+capset=$3
+path=$4
 
 #set the capability
-setcap "$capset=ep" "$path" 
+`setcap "$capset=ep" "$path"` 
 
 #check if the capabilitiy got set correctly
-setcap -v "$capset=ep" "$path"
+`setcap -v "$capset=ep" "$path"`
+res=$?
 
-exit
+if [ $? -ne 0 ]; then
+	chown $uid_gid $path
+	chmod $perms $path 
+fi
+
+exit $res

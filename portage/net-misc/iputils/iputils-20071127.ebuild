@@ -75,5 +75,5 @@ src_install() {
 }
 
 pkg_postinst() {
-	fcaps cap_net_raw /bin/ping || die "fcaps /bin/ping failed"
+	fcaps root:root 4711 cap_net_raw /bin/ping 
 }
