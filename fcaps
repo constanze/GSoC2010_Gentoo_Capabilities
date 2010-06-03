@@ -7,10 +7,10 @@ capset=$3
 path=$4
 
 #set the capability
-`setcap "$capset=ep" "$path"` 
+setcap "$capset=ep" "$path" 
 
 #check if the capabilitiy got set correctly
-`setcap -v "$capset=ep" "$path"`
+setcap -v "$capset=ep" "$path"
 res=$?
 
 if [ $? -ne 0 ]; then

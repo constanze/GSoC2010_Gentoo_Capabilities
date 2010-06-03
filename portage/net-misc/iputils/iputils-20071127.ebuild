@@ -75,5 +75,8 @@ src_install() {
 }
 
 pkg_postinst() {
-	fcaps root:root 4711 cap_net_raw /bin/ping 
+	fcaps root:root 4711 cap_net_raw /bin/ping || 
+	ewarn "Capabilities could not be set."
+	ewarn "Fallback file-mode was set."
+	ewarn "Check your kernel and filesystem for capability-support."
 }
