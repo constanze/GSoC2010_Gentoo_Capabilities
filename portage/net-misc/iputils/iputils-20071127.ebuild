@@ -61,8 +61,6 @@ src_install() {
 	use ipv6 && dosbin trace{path,route}6
 	dosbin clockdiff rarpd rdisc ipg tftpd || die "misc sbin"
 
-	#fperms 4711 /bin/ping
-	use ipv6 && fperms 4711 /bin/ping6 /usr/sbin/traceroute6
 
 	dodoc INSTALL RELNOTES
 	use ipv6 \
@@ -75,8 +73,17 @@ src_install() {
 }
 
 pkg_postinst() {
-	fcaps root:root 4711 cap_net_raw /bin/ping || 
-	ewarn "Capabilities could not be set."
-	ewarn "Fallback file-mode was set."
-	ewarn "Check your kernel and filesystem for capability-support."
+	checkcap=0
+	fcaps root:root 4711 cap_net_raw /bin/ping 
+	checkcap=$(( $checkcap || $? ))
+	use ipv6 && fcaps root:root 4711 cap_net_raw /bin/ping6 
+	checkcap=$(( $checkcap || $? ))
+	use ipv6 && fcaps root:root 4711 cap_net_raw /usr/sbin/traceroute6
+	checkcap=$(( $checkcap || $? ))
+
+	if [ $checkcap -ne 0 ]; then 
+		ewarn "Capabilities could not be set."
+		ewarn "Fallback file-mode was set."
+		ewarn "Check your kernel and filesystem for capability-support."
+	fi
 }
