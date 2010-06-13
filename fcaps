@@ -6,6 +6,14 @@ perms=$2
 capset=$3
 path=$4
 
+#set file-mode
+chmod $perms $path
+#remove suid-bit
+chmod -s $path
+
+#set owner/group
+chown $uid_gid $path
+
 #set the capability
 setcap "$capset=ep" "$path" 
 
@@ -13,9 +21,9 @@ setcap "$capset=ep" "$path"
 setcap -v "$capset=ep" "$path"
 res=$?
 
-if [ $? -ne 0 ]; then
-	chown $uid_gid $path
-	chmod $perms $path 
+#if caps couldn't be set, set suid bit as fallback
+if [ $res -ne 0 ]; then
+	chmod u+s $path 
 fi
 
 exit $res

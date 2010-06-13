@@ -60,8 +60,7 @@ src_install() {
 	dosbin tracepath || die "tracepath"
 	use ipv6 && dosbin trace{path,route}6
 	dosbin clockdiff rarpd rdisc ipg tftpd || die "misc sbin"
-
-
+	
 	dodoc INSTALL RELNOTES
 	use ipv6 \
 		&& dosym ping.8 /usr/share/man/man8/ping6.8 \
