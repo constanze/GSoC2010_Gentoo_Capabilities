@@ -15,10 +15,12 @@ chmod -s $path
 chown $uid_gid $path
 
 #set the capability
-setcap "$capset=ep" "$path" 
+setcap "$capset=ep" "$path" &> /dev/null
 
 #check if the capabilitiy got set correctly
-setcap -v "$capset=ep" "$path"
+setcap -v "$capset=ep" "$path" &> /dev/null
+
+
 res=$?
 
 #if caps couldn't be set, set suid bit as fallback
