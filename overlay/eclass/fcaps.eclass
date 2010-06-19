@@ -10,10 +10,8 @@
 # Due to probable capability-loss on moving or copying, this happens in
 # pkg_postinst-phase (at least for now).
 
-IUSE="${IUSE}
-	filecaps"
-DEPEND="${DEPEND}
-	filecaps? ( sys-libs/libcap )"
+IUSE="filecaps"
+DEPEND="filecaps? ( sys-libs/libcap )"
 
 # @FUNCTION: fcaps 
 # @USAGE: fcaps {uid:gid} {file-mode} {cap1[,cap2,...]} {file}
@@ -22,16 +20,24 @@ DEPEND="${DEPEND}
 # fcaps sets the specified capabilities in the effective and permitted set of
 # the given file. In case of failure fcaps sets the given file-mode.
 fcaps() {
-	uid_gid=$1
-	perms=$2
-	capset=$3
-	path=$4
+	local uid_gid=$1
+	local perms=$2
+	local capset=$3
+	local path=$4
 
 	#set owner/group
-	chown $uid_gid $path
+	chown $uid_gid $path 
+	if [ $? -ne 0 ]; then 
+		ewarn "chown "$uid_gid" "$path" failed."
+		return 1
+	fi
 
 	#set file-mode including suid
-	chmod $perms $path
+	chmod $perms $path || return 3
+	if [ $? -ne 0 ]; then 
+		ewarn "chmod "$perms" "$path" failed."
+		return 1
+	fi
 
 	#if filecaps is not enabled all is done
 	use !filecaps && return 0
@@ -47,6 +53,10 @@ fcaps() {
 	#if caps could be set, remove suid-bit
 	if [ $res -eq 0 ]; then
 		chmod -s $path
+	else
+		ewarn "setcap "$capset"=ep "$path" failed."
+		ewarn "Check your kernel and filesystem."
+		ewarn "Fallback file-mode was set."
 	fi
 
 	return $res

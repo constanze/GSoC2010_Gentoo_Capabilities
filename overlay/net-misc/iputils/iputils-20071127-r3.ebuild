@@ -1,6 +1,6 @@
 # Copyright 1999-2008 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/iputils/iputils-20071127.ebuild,v 1.10 2008/04/20 20:55:59 vapier Exp $
+# $Header: $
 
 inherit flag-o-matic eutils toolchain-funcs fcaps
 
@@ -11,7 +11,9 @@ SRC_URI="http://www.skbuff.net/iputils/iputils-s${PV}.tar.bz2
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86"
+#KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="~amd64"
+
 IUSE="static ipv6 doc"
 
 DEPEND="virtual/os-headers
@@ -72,17 +74,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	checkcap=0
 	fcaps root:root 4711 cap_net_raw /bin/ping 
-	checkcap=$(( $checkcap || $? ))
 	use ipv6 && fcaps root:root 4711 cap_net_raw /bin/ping6 
-	checkcap=$(( $checkcap || $? ))
 	use ipv6 && fcaps root:root 4711 cap_net_raw /usr/sbin/traceroute6
-	checkcap=$(( $checkcap || $? ))
-
-	if [ $checkcap -ne 0 ]; then 
-		ewarn "Capabilities could not be set."
-		ewarn "Fallback file-mode was set."
-		ewarn "Check your kernel and filesystem for capability-support."
-	fi
 }
