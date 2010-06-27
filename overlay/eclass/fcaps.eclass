@@ -28,15 +28,15 @@ fcaps() {
 	#set owner/group
 	chown $uid_gid $path 
 	if [ $? -ne 0 ]; then 
-		ewarn "chown "$uid_gid" "$path" failed."
-		return 1
+		eerror "chown "$uid_gid" "$path" failed."
+		return 2
 	fi
 
 	#set file-mode including suid
-	chmod $perms $path || return 3
+	chmod $perms $path 
 	if [ $? -ne 0 ]; then 
-		ewarn "chmod "$perms" "$path" failed."
-		return 1
+		eerror "chmod "$perms" "$path" failed."
+		return 3
 	fi
 
 	#if filecaps is not enabled all is done
