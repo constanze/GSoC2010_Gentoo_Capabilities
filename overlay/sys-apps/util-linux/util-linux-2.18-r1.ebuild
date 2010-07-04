@@ -47,6 +47,8 @@ src_prepare() {
 		use loop-aes && epatch "${WORKDIR}"/util-linux-ng-*.diff
 	fi
 	use uclibc && sed -i -e s/versionsort/alphasort/g -e s/strverscmp.h/dirent.h/g mount/lomount.c
+	epatch "${FILESDIR}"/${P}-ncursesw.patch
+	epatch "${FILESDIR}"/${P}-slang.patch #326373
 	elibtoolize
 }
 
@@ -76,7 +78,6 @@ src_configure() {
 		--disable-mesg \
 		--enable-partx \
 		--enable-raw \
-		--enable-rdev \
 		--enable-rename \
 		--disable-reset \
 		--disable-login-utils \
@@ -113,5 +114,5 @@ src_install() {
 pkg_postinst() {
 
 	fcaps root:root 4711 cap_dac_override,cap_sys_admin /bin/mount
-	fcaps root:root 4711 cap_dac_override,cap_sys_admin /bin/umount
+	fcaps root:root 4711 cap_dac_override,cap_sys_admin,cap_chown /bin/umount
 }

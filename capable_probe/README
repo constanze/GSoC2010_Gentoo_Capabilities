@@ -1,0 +1,74 @@
+capable_probe
+
+
+The capable_probe module
+------------------------
+
+When the capable_probe kernel module is inserted, any calls to cap_capable() are
+replaced by a call to the cr_capable() function. This function prints the name of
+the program that requires capabilities and the capability being checked. It then
+continues executing the actual cap_capable() call through the call to
+jprobe_return()
+
+
+To compile the module just type
+-------------------------------
+
+$ make
+
+to install the module for the running kernel type
+
+$ make install
+
+to clean the dir type
+
+$ make clean
+
+
+
+To know the needed capabilities, insert the module
+--------------------------------------------------
+
+$ modprobe capable_probe
+
+follow the logs with
+
+$ tail -f /var/log/messages
+
+and execute in an other window - for example - as non-root the ping binary without
+setuid bit set
+
+$ /bin/ping localhost
+
+The system logs now contain multiple entries for ping. These are the capabilities
+that the program attempted to use. Not that all of these are needed. We can
+cross-reference /usr/include/linux/capability.h to convert the integer to a
+capability name and see that ping requested 21, 13, and 7.
+
+    * 21 is CAP_SYS_ADMIN. Avoid granting this catch-all to any program.
+    * 7 is CAP_SETUID. Ping should not require this.
+    * 13 is CAP_NET_RAW. Ping should require this.
+
+Let's grant it that capability and see whether it succeeds.
+
+$ setfcaps -c cap_net_raw=p -e /bin/ping (fscaps package)
+$ setcap cap_net_raw=ep /bin/ping (libcap2 package)
+(become non root user)
+$ ping localhost
+
+
+As we expected, ping succeeded.
+
+
+
+The source and some of the text is taken from
+http://www.ibm.com/developerworks/linux/library/l-posixcap.html
+
+
+
+Chris Friedhoff chris@friedhoff.org
+23.12.2007 F-Thoiry
+
+
+
+23.12.2007 - initial release
