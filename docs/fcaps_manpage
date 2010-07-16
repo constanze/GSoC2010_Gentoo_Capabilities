@@ -38,6 +38,7 @@
         <arg choice="req">file-mode</arg>
         <arg choice="req">capability1[,capability2,capability3,...]</arg>
         <arg choice="req">file</arg>
+        <arg choice="opt">sets</arg>
     </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -71,17 +72,33 @@
             </listitem>
         </varlistentry>
     </variablelist>
+    <para>The following arguments are optional:</para>
+    <variablelist>
+        <varlistentry>
+            <term><option>sets</option></term>
+            <listitem>
+            <para>0 for ei, which means to use the binary 
+			                one has to have the right caps 
+							in /etc/security/capability.conf
+					        and pam_cap needs to be used.
+				  1 for ep, which means anyone can use it, 
+				            who can execute it.
+				  If sets is not provided the default (1) is used.
+			</para>
+            </listitem>
+        </varlistentry>
+    </variablelist>
 </refsect1>
 
 <refsect1 id="fcaps.description">
     <title>Description</title>
-    <para>fcaps sets the specified capabilities in the effective and permitted set of the given file.
-	In case of failure fcaps sets the given file-mode.</para>
+    <para>fcaps sets the specified capabilities in the sets specified by sets 
+	       of the given file.  In case of failure fcaps sets the given file-mode.</para>
 </refsect1>
 
 <refsect1 id="fcaps.example">
     <title>Example</title>
-    <para>fcaps root:root 4711 cap_net_raw /bin/ping</para>
+    <para>fcaps root:root 4711 cap_net_raw /bin/ping 1</para>
 </refsect1>
 
 <refsect1 id="fcaps.seealso">
