@@ -20,10 +20,17 @@ DEPEND="filecaps? ( sys-libs/libcap )"
 # fcaps sets the specified capabilities in the effective and permitted set of
 # the given file. In case of failure fcaps sets the given file-mode.
 fcaps() {
+	
 	local uid_gid=$1
 	local perms=$2
 	local capset=$3
 	local path=$4
+	if [ $# -eq 5 ]; then
+		local set_mode=$5
+	else
+		#if there is no set_mode provided, it is set to true
+		local set_mode=1
+	fi
 
 	#set owner/group
 	chown $uid_gid $path 
@@ -42,19 +49,31 @@ fcaps() {
 	#if filecaps is not enabled all is done
 	use !filecaps && return 0
 
+	#if libcap is not installed caps cannot be set
+	if [ ! -f "/sbin/setcap" ]; then
+		return 4
+	fi
+
+	#Check for set mode
+	if [ $set_mode -eq 1 ]; then 
+		local sets="=ep"
+	else
+		local sets="=ei"
+	fi
+	
 	#set the capability
-	setcap "$capset=ep" "$path" &> /dev/null
+	setcap "$capset""$sets" "$path" &> /dev/null
 
 	#check if the capabilitiy got set correctly
-	setcap -v "$capset=ep" "$path" &> /dev/null
+	setcap -v "$capset""$sets" "$path" &> /dev/null
 
-	res=$?
+	local res=$?
 
 	#if caps could be set, remove suid-bit
 	if [ $res -eq 0 ]; then
 		chmod -s $path
 	else
-		ewarn "setcap "$capset"=ep "$path" failed."
+		ewarn "setcap "$capset" "$path" failed."
 		ewarn "Check your kernel and filesystem."
 		ewarn "Fallback file-mode was set."
 	fi
