@@ -90,16 +90,16 @@ src_install() {
 pkg_postinst() {
 	
 	if use suid; then
-		fcaps root:tcpdump 4110 cap_net_raw,cap_net_admin /usr/bin/tcpdump 0
+		fcaps root:tcpdump 4110 cap_net_raw /usr/bin/tcpdump 0
 	else
-		fcaps root:root 755 cap_net_raw,cap_net_admin /usr/bin/tcpdump 0
+		fcaps root:root 755 cap_net_raw /usr/bin/tcpdump 0
 	fi
 
 	use suid && elog "To let normal users run tcpdump add them into tcpdump group."
 	if use filecaps; then
 		elog "To let normal users run tcpdump, you have to use pam_cap"
 		elog "and add the users to /etc/security/capability.conf"
-		elog "with cap_net_raw and cap_net_admin caps."
+		elog "with cap_net_raw."
 		elog "For a detailed guide see:"
 		elog "http://wiki.github.com/constanze/GSoC2010_Gentoo_Capabilities/pam_cap-on-gentoo"
 	fi
