@@ -165,15 +165,6 @@ src_install() {
 	newdoc README README.download
 	cd doc
 	dodoc HOWTO README* WISHLIST *.txt
-	
-	fcaps root:root 4711 cap_chown,cap_dac_override,cap_fowner /bin/passwd
-	fcaps root:root 4711 cap_chown,cap_dac_read_search,cap_fsetid,cap_setuid /usr/bin/chsh
-	fcaps root:root 4711 cap_chown,cap_dac_read_search,cap_fsetid,cap_setuid /usr/bin/chfn
-	fcaps root:root 4711 cap_dac_read_search /usr/bin/chage
-	fcaps root:root 4711 cap_setgid,cap_setuid /bin/su
-	fcaps root:root 4711 cap_dac_override,cap_setgid /usr/bin/expiry
-	fcaps root:root 4711 cap_chown,cap_dac_override,cap_setuid /usr/bin/gpasswd
-	fcaps root:root 4711 cap_dac_override,cap_setgid /usr/bin/newgrp
 }
 
 pkg_preinst() {
@@ -185,6 +176,15 @@ pkg_preinst() {
 
 pkg_postinst() {
 
+	fcaps root:root 4711 cap_chown,cap_dac_override,cap_fowner /bin/passwd
+	fcaps root:root 4711 cap_chown,cap_dac_read_search,cap_fsetid,cap_setuid /usr/bin/chsh
+	fcaps root:root 4711 cap_chown,cap_dac_read_search,cap_fsetid,cap_setuid /usr/bin/chfn
+	fcaps root:root 4711 cap_dac_read_search /usr/bin/chage
+	fcaps root:root 4711 cap_setgid,cap_setuid /bin/su
+	fcaps root:root 4711 cap_dac_override,cap_setgid /usr/bin/expiry
+	fcaps root:root 4711 cap_chown,cap_dac_override,cap_setuid /usr/bin/gpasswd
+	fcaps root:root 4711 cap_dac_override,cap_setgid /usr/bin/newgrp
+	
 	# Enable shadow groups (we need ROOT=/ here, as grpconv only
 	# operate on / ...).
 	if [[ ${ROOT} == / && ! -f /etc/gshadow ]] ; then

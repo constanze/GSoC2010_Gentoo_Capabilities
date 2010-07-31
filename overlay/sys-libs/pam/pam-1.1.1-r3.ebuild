@@ -173,10 +173,12 @@ src_install() {
 	# modules, and libpam is installed as a shared object only, so we
 	# don't ned them for static linking either.
 	find "${D}" -name '*.la' -delete
-	
-	fcaps root:root 4711 cap_dac_override /sbin/unix_chkpwd
 }
 
 pkg_preinst() {
 	check_old_modules || die "deprecated PAM modules still used"
+}
+
+pkg_postinst() {
+	fcaps root:root 4711 cap_dac_override /sbin/unix_chkpwd
 }

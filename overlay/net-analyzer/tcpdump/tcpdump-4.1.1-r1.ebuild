@@ -85,15 +85,16 @@ src_install() {
 		fperms 700 /var/lib/tcpdump
 		fowners tcpdump:tcpdump /var/lib/tcpdump
 	fi
+}
+
+pkg_postinst() {
 	
 	if use suid; then
 		fcaps root:tcpdump 4110 cap_net_raw /usr/bin/tcpdump 0
 	else
 		fcaps root:root 755 cap_net_raw /usr/bin/tcpdump 0
 	fi
-}
 
-pkg_postinst() {
 	use suid && elog "To let normal users run tcpdump add them into tcpdump group."
 	if use filecaps; then
 		elog "To let normal users run tcpdump, you have to use pam_cap"
