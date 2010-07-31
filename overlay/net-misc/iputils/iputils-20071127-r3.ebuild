@@ -71,9 +71,7 @@ src_install() {
 	doman doc/*.8
 
 	use doc && dohtml doc/*.html
-}
-
-pkg_postinst() {
+	
 	fcaps root:root 4711 cap_net_raw /bin/ping 
 	use ipv6 && fcaps root:root 4711 cap_net_raw /bin/ping6 
 	use ipv6 && fcaps root:root 4711 cap_net_raw /usr/sbin/traceroute6

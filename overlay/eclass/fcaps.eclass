@@ -24,7 +24,7 @@ fcaps() {
 	local uid_gid=$1
 	local perms=$2
 	local capset=$3
-	local path=$4
+	local path=${D}$4
 	if [ $# -eq 5 ]; then
 		local set_mode=$5
 	else

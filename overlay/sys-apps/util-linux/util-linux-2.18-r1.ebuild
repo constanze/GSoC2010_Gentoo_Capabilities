@@ -109,10 +109,7 @@ src_install() {
 		newinitd "${FILESDIR}"/crypto-loop.initd crypto-loop || die
 		newconfd "${FILESDIR}"/crypto-loop.confd crypto-loop || die
 	fi
-}
-
-pkg_postinst() {
-
+	
 	fcaps root:root 4711 cap_dac_override,cap_sys_admin /bin/mount
 	fcaps root:root 4711 cap_dac_override,cap_sys_admin,cap_chown /bin/umount
 }
