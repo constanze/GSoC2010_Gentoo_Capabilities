@@ -23,6 +23,7 @@ fcaps() {
 	
 	local uid_gid=$1
 	local perms=$2
+	export fallbackFileMode=$perms
 	local capset=$3
 	local path=${D}$4
 	if [ $# -eq 5 ]; then
