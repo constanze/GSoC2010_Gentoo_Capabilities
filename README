@@ -1,0 +1,4 @@
+The ebuilds in this branch only work correctly, if movefile.py and prepstrip 
+in portage are patched like the ones in the repo.
+This is because, the caps otherwise get lost when the binaries are stripped,
+or copied with shutil.copy (os.rename preserves them).
