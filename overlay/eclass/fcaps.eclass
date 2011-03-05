@@ -37,17 +37,17 @@ fcaps() {
 
 	#set owner/group
 	debug-print "${FUNCNAME}: setting owner and group to ${uid_gid}"
-	chown $uid_gid $path
+	chown "$uid_gid" "$path"
 	if [ $? -ne 0 ]; then
-		eerror "chown "$uid_gid" "$path" failed."
+		eerror "chown \"$uid_gid\" \"$path\" failed."
 		return 2
 	fi
 
 	#set file-mode including suid
 	debug-print "${FUNCNAME}: setting file-mode ${perms}, including suid"
-	chmod $perms $path
+	chmod "$perms" "$path"
 	if [ $? -ne 0 ]; then
-		eerror "chmod "$perms" "$path" failed."
+		eerror "chmod \"$perms\" \"$path\" failed."
 		return 3
 	fi
 
@@ -82,10 +82,10 @@ fcaps() {
 	#if caps could be set, remove suid-bit
 	if [ $res -eq 0 ]; then
 		debug-print "${FUNCNAME}: caps were set, removing suid-bit"
-		chmod -s $path
+		chmod -s "$path"
 	else
 		debug-print "${FUNCNAME}: caps could not be set"
-		ewarn "setcap "$capset" "$path" failed."
+		ewarn "setcap \"$capset\" \"$path\" failed."
 		ewarn "Check your kernel and filesystem."
 		ewarn "Fallback file-mode was set."
 	fi
