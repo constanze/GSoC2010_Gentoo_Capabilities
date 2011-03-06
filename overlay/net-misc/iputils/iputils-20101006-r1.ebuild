@@ -80,9 +80,9 @@ src_install() {
 	use ipv6 && dosbin trace{path,route}6
 	dosbin clockdiff rarpd rdisc ipg tftpd || die
 
-	fcaps root:root 4711 cap_net_raw /bin/ping
-	use ipv6 && fcaps root:root 4711 cap_net_raw /bin/ping6
-	use ipv6 && fcaps root:root 4711 cap_net_raw /usr/sbin/traceroute6
+	fcaps root:root 4711 cap_net_raw ${D}/bin/ping
+	use ipv6 && fcaps root:root 4711 cap_net_raw ${D}/bin/ping6
+	use ipv6 && fcaps root:root 4711 cap_net_raw ${D}/usr/sbin/traceroute6
 
 	dodoc INSTALL RELNOTES
 	use ipv6 \

@@ -21,18 +21,21 @@ DEPEND="filecaps? ( sys-libs/libcap )"
 # the given file. In case of failure fcaps sets the given file-mode.
 fcaps() {
 	debug-print-function ${FUNCNAME} "$@"
-	debug-print "${FUNCNAME}: Trying to set capabilities for ${4}"
+	[ $# -lt 4 ] && die "wrong arg count"
+
 	local uid_gid=$1
 	local perms=$2
-	export fallbackFileMode=$perms
 	local capset=$3
 	local path=$4
-	if [ $# -eq 5 ]; then
-		local set_mode=$5
+
+	debug-print "${FUNCNAME}: Trying to set capabilities for ${4}"
+
+	if [ $# -eq 5 ] && [ $5 -eq 0 ]; then
+		debug-print "${FUNCNAME}: set-mode = ei"
+		local sets="=ei"
 	else
-		debug-print "${FUNCNAME}: no set-mode provided, setting it to ep"
-		#if there is no set_mode provided, it is set to true
-		local set_mode=1
+		debug-print "${FUNCNAME}: set-mode = ep"
+		local sets="=ep"
 	fi
 
 	#set owner/group
@@ -60,21 +63,10 @@ fcaps() {
 		return 4
 	fi
 
-	#Check for set mode
-	if [ $set_mode -eq 1 ]; then
-		debug-print "${FUNCNAME}: set-mode = ep"
-		local sets="=ep"
-	else
-		debug-print "${FUNCNAME}: set-mode = ei"
-		local sets="=ei"
-	fi
-
 	#set the capability
-	debug-print "${FUNCNAME}: setting capabilities"
 	setcap "$capset""$sets" "$path" &> /dev/null
 
 	#check if the capabilitiy got set correctly
-	debug-print "${FUNCNAME}: checking capabilities"
 	setcap -v "$capset""$sets" "$path" &> /dev/null
 
 	local res=$?
