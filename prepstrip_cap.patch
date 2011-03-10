@@ -1,10 +1,10 @@
---- portage_orig/bin/ebuild-helpers/prepstrip	2010-08-01 19:33:49.000000000 +0200
-+++ portage/bin/ebuild-helpers/prepstrip	2010-07-31 13:20:40.000000000 +0200
-@@ -150,6 +150,11 @@
+--- portage/bin/ebuild-helpers/prepstrip	2011-03-10 16:24:48.000000000 +0100
++++ prepstrip	2011-03-10 16:34:33.000000000 +0100
+@@ -149,6 +149,11 @@
  	# actually causes problems.  install sources for all
  	# elf types though cause that stuff is good.
  
-+	if hasq filecaps ${USE} ; then
++	if type -P getcap > /dev/null ; then
 +		#save caps
 +		getcapOutput=`getcap "${x}"` 
 +	fi
@@ -12,12 +12,12 @@
  	if [[ ${f} == *"current ar archive"* ]] ; then
  		vecho "   ${x:${#D}}"
  		if ${strip_this} ; then
-@@ -171,6 +176,14 @@
+@@ -170,6 +175,14 @@
  			${STRIP} ${SAFE_STRIP_FLAGS} "${x}"
  		fi
  	fi
 +
-+	if hasq filecaps ${USE} ; then
++	if type -P setcap > /dev/null ; then
 +		#Apply saved caps
 +		capset=${getcapOutput#*= }
 +		if [ -n "$capset" ] ; then

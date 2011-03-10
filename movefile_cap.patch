@@ -1,23 +1,27 @@
---- portage_orig/pym/portage/util/movefile.py	2010-08-01 19:33:49.000000000 +0200
-+++ portage/pym/portage/util/movefile.py	2010-07-31 13:20:40.000000000 +0200
-@@ -8,6 +8,7 @@
+--- portage/pym/portage/util/movefile.py	2011-03-10 16:24:48.000000000 +0100
++++ movefile.py	2011-03-10 16:44:27.000000000 +0100
+@@ -7,6 +7,10 @@
  import os as _os
  import shutil as _shutil
  import stat
-+import xattr
++try:
++	import xattr
++except ImportError:
++	xattr = None
  
  import portage
  from portage import bsd_chflags, _encodings, _os_overrides, _selinux, \
-@@ -156,9 +157,20 @@
+@@ -163,9 +167,21 @@
  					selinux.copyfile(src, dest + "#new")
  					selinux.rename(dest + "#new", dest)
  				else:
-+					#Check for caps
-+					hasCaps=0
-+					if xattr.list(src).count("security.capability"):
-+						#Save caps
-+						hasCaps=1
-+						capset=xattr.get(src,"security.capability")
++					if xattr is not None:
++						#Check for caps
++						hasCaps=0
++						if xattr.list(src).count("security.capability"):
++							#Save caps
++							hasCaps=1
++							capset=xattr.get(src,"security.capability")
  					shutil.copyfile(src,dest+"#new")
  					os.rename(dest+"#new",dest)
  				didcopy=1
@@ -29,13 +33,14 @@
  			except SystemExit as e:
  				raise
  			except Exception as e:
-@@ -182,7 +194,15 @@
+@@ -189,7 +205,16 @@
  				else:
  					os.chown(dest,sstat[stat.ST_UID],sstat[stat.ST_GID])
  				os.chmod(dest, stat.S_IMODE(sstat[stat.ST_MODE])) # Sticky is reset on chown
-+				if hasCaps:
-+					#Apply saved caps
-+					xattr.set(dest,"security.capability",capset)
++				if xattr is not None:
++					if hasCaps:
++						#Apply saved caps
++						xattr.set(dest,"security.capability",capset)
  				os.unlink(src)
 +		except EnvironmentError as e:
 +			print(_("!!! Failed to set capabilities in movefile()"))
